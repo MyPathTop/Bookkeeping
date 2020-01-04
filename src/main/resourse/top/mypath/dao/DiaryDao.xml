@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTDMapper3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.mypath.dao.DiaryDao">
+    <resultMap id="diaryResultMap" type="Diary">
+        <id property="diaryId" column="DIARY_ID"/>
+        <result property="diaryName" column="DIARY_NAME"/>
+        <result property="location" column="LOCATION"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="cancel" column="CANCEL"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="Diary">
+        insert into diary(DIARY_NAME, LOCATION, CREATE_TIME, CANCEL, USER_ID)
+        values (diaryName,location,createTime,cancel,user.id)
+        <selectKey keyColumn="DIARY_ID" keyProperty="diaryId" order="AFTER" resultType="java.lang.Integer">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+    <update id="update" parameterType="top.mypath.domain.Diary">
+        update diary 
+        <set>
+          <if test="diaryName!=null">DIARY_NAME=#{diaryName},</if>
+          <if test="location!=null">LOCATION=#{location}</if>
+          <if test="createTime!=null">CREATE_TIME=#{createTime}</if>
+          <if test="cancel!=null">CANCEL=#{cancel}</if>
+        </set>
+        where DIARY_ID=#{diaryId}
+    </update>
+
+    <select id="findByUser" resultType="top.mypath.domain.Diary">
+        select * from diary where CANCEL='1'and USER_ID=#{userId} order by CREATE_TIME desc
+    </select>
+</mapper>

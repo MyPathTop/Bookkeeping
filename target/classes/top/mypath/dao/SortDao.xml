@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTDMapper3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.mypath.dao.SortDao">
+    <resultMap id="sortResultMap" type="Sort">
+        <id property="sortId" column="SORT_ID"/>
+        <result property="sortName" column="SORT_NAME"/>
+        <result property="icon" column="ICON"/>
+        <result property="cancel" column="CANCEL"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="Sort" >
+
+        insert into sort(SORT_NAME,ICON,CANCEL) values (#{sortName},#{icon},#{cancel})
+        <selectKey keyProperty="sortId" keyColumn="SORT_ID" resultType="java.lang.Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <insert id="update" parameterType="Sort">
+        update sort 
+        <set>
+            <if test="sortName != null">SORT_NAME=#{sortName},</if>
+            <if test="icon != null">ICON=#{icon},</if>
+            <if test="cancel != null">CANCEL=#{cancel}</if>
+        </set>
+        where SORT_ID=#{sortId}
+    </insert>
+    <select id="findAll" resultType="Sort">
+        select SORT_ID, SORT_NAME, ICON, CANCEL from sort where CANCEL='1'
+    </select>
+</mapper>

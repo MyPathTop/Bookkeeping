@@ -1,0 +1,16 @@
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTDConfig3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    <typeAliases>
+        <package name="top.mypath.domain" />
+    </typeAliases>
+    <mappers>
+        <package name="top.mypath.dao"/>
+    </mappers>
+   
+</configuration>

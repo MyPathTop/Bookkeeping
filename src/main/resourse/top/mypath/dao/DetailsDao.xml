@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTDMapper3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.mypath.dao.DetailsDao">
+    <resultMap id="detailsResultMap" type="Detail">
+        <id property="detailId" column="DETAIL_ID"/>
+        <result property="inOut" column="IN_OUT"/>
+        <result property="money" column="MONEY"/>
+        <result property="balance" column="BALANCE"/>
+        <result property="remark" column="REMARK"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="cancel" column="CANCEL"/>
+        <association property="sort" javaType="Sort" resultMap="top.mypath.dao.SortDao.sortResultMap" column="SORT_ID"/>
+        <association property="user" javaType="User" resultMap="top.mypath.dao.UserDao.userResultMap" column="USER_ID"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="top.mypath.domain.Detail">
+        <selectKey keyProperty="detailId" keyColumn="DETAIL_ID" resultType="java.lang.Integer" order="AFTER">
+             select last_insert_id()
+        </selectKey>
+        insert into details(IN_OUT, SORT_ID, MONEY, BALANCE, REMARK, CREATE_TIME, USER_ID, CANCEL)
+        values (#{inOut},#{sort.sortId},#{money},#{balance},#{remark},#{createTime},#{user.userId},#{cancel})
+    </insert>
+
+    <update id="update" parameterType="top.mypath.domain.Detail">
+        update details
+        <set>
+            <if test="inOut!=null">IN_OUT=#{inOut},</if>
+            <if test="money!=null">MONEY=#{money},</if>
+            <if test="balance!=null">BALANCE=#{balance},</if>
+            <if test="sort.sortId!=null">SORT_ID=#{sort.sortId},</if>
+            <if test="remark!=null">REMARK=#{remark},</if>
+            <if test="createTime!=null">CREATE_TIME=#{createTime},</if>
+            <if test="cancel!=null">CANCEL=#{cancel}</if>
+        </set>
+        where DETAIL_ID=#{detailId}
+    </update>
+
+    <update id="userBalance" >
+        update user SET MY_BALANCE=#{balance} where USER_ID=#{userId}
+    </update>
+
+    <delete id="deleteDetail" parameterType="java.lang.Integer">
+        update details set CANCEL='0' where DETAIL_ID=#{detailId}
+    </delete>
+
+    <select id="findAllDetailsByDate" resultMap="detailsResultMap" >
+        select detail.DETAIL_ID, detail.IN_OUT, detail.SORT_ID, detail.MONEY, detail.BALANCE, detail.REMARK, detail.CREATE_TIME, detail.CANCEL,s.SORT_ID,s.SORT_NAME,s.ICON,s.CANCEL
+        from details detail
+        left join sort s on detail.SORT_ID=s.SORT_ID
+        left join user u on detail.USER_ID = u.USER_ID
+        where detail.CANCEL='1' and USER_ID=#{userId} and DATE_FORMAT(CREATE_TIME,'%Y-%m')=DATE_FORMAT(#{month},'%Y-%m')
+    </select>
+    <select id="findById" resultMap="detailsResultMap" parameterType="java.lang.Integer">
+        select d.detail_id, d.in_out, d.sort_id, d.money, d.balance, d.remark, d.create_time, d.user_id, d.cancel, s.sort_id, s.sort_name, s.icon, s.cancel, u.user_id
+        from details d
+        left join sort s on d.SORT_ID = s.SORT_ID
+        left join user u on d.USER_ID = u.USER_ID
+        where d.CANCEL='1' and  DETAIL_ID=#{detailId}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTDMapper3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.mypath.dao.UserDao">
+
+    <resultMap id="userResultMap" type="User">
+        <id property="userId" column="USER_ID"  />
+        <result property="head" column="HEAD"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="sex" column="SEX"/>
+        <result property="myBalance" column="MY_BALANCE"/>
+        <result property="cancel" column="CANCEL"/>
+    </resultMap>
+    <insert id="insert" parameterType="User">
+        insert into user value (#{userId},#{head},#{userName},#{password},#{sex},#{email},#{myBalance},#{cancel})
+    </insert>
+
+    <select id="findAll" resultMap="userResultMap">
+        select USER_ID, HEAD, USER_NAME, PASSWORD, SEX, EMAIL, MY_BALANCE, CANCEL from user
+    </select>
+
+    <select id="findById" resultType="User"  parameterType="java.lang.String">
+        select USER_ID, HEAD, USER_NAME, PASSWORD, SEX, EMAIL, MY_BALANCE, CANCEL from user where CANCEL='1' and USER_ID=#{id}
+    </select>
+
+
+    <update id="update" parameterType="User">
+      update user
+      set HEAD=#{head},USER_NAME=#{userName},PASSWORD=#{password},SEX=#{sex},EMAIL=#{email},MY_BALANCE=#{myBalance},CANCEL=#{cancel}
+      where USER_ID=#{userId}
+    </update>
+
+    <update id="updateMyBalance">
+        update user SET MY_BALANCE=#{balance} where USER_ID=#{userId}
+    </update>
+
+
+</mapper>
